@@ -1,0 +1,12 @@
+Version 1.0 - ??, 2010
+ - Initial version. Never released.
+
+Version 1.1 - August 2, 2011
+ - Added support for expandable tables, where odd rows are header rows and even rows are content rows that get expanded/collapsed when the header row is clicked.
+ - Added the "contentSet" event and the setContent() method.
+ - Added the "ajax" option and loadContent() method for loading item content from AJAX calls automatically when the item is expanded.
+ - Added the "contentHtmlElement" parameter to the "expanded" and "collapsed" events to make them more useful.
+ - Added support for a jQuery object representing the HTML head element of an item to be passed to the toggle(), expand(), and collapse() methods.
+ - Added globalization support through the $.ui.expandable.globalization object.
+ - Added the ability to disable/enable the widget or individual items.
+ - Made many improvements and optimizations to the code.
