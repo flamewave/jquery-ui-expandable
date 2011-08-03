@@ -9,18 +9,27 @@
 * https://github.com/flamewave/jquery-ui-expandable
 */
 
+This widget is similar to the jQuery UI Accordion widget, except that it allows more than one section to be open at a
+time. It does not support only keeping one section open at a time, if you need that functionality, use the accordion
+provided by jQuery UI.
+
+The default markup is exactly the same as the accordion, but can be customized. Tables are also supported, where the
+first, third, fifth (and so on) rows are header rows that when clicked on will show/hide the second, fourth, sixth
+(and so on) rows. The content of the sections can also be auto-loaded from an AJAX call the first time the section is
+expanded.
+
 ****************
 * Dependencies *
 ****************
-jQuery (1.4.2)
-jQuery-ui (1.8.6 - core, widget)
+jQuery (1.4.2 and up)
+jQuery-ui (1.8.6 and up - core, widget)
 
 *******
 * Use *
 *******
 JavaScript:
 -----------
-$(function() { $('#expandable').expandable([options]); });
+$('#expandable').expandable([options]);
 
 HTML:
 -----
@@ -71,17 +80,17 @@ defaultState: true
           Example: { 'item_1_id' : true, 'item_2_id': false } -or- { 0: true, 1: false }
 
 titleSelector: '> h3' or for tables '> tbody > tr:even'
-    The jQuery selector of the elements that contain the title for each expandable item. The element immediatly following
-    (next sibling) each of the title elements is used as the content for each item.
+    The jQuery selector of the elements that contain the title for each expandable item. The element immediatly
+    following (next sibling) each of the title elements is used as the content for each item.
 
-icon: { collapsed: 'ui-icon-triangle-1-e', collapsedTitle: null, expanded: 'ui-icon-triangle-1-s', expandedTitle: null }
+icon: {collapsed: 'ui-icon-triangle-1-e', collapsedTitle: null, expanded: 'ui-icon-triangle-1-s', expandedTitle: null}
     Holds the icons that are inserted before the title text of each item. If null, no icons are used.
         - collapsed      - The icon used when an item is in it's collapsed state.
-        - collapsedTitle - The icon title text (tool tip) when an item is in it's collapsed state. When null, the default
-                           globalization value is used.
+        - collapsedTitle - The icon title text (tool tip) when an item is in it's collapsed state. When null, the
+                           default globalization value is used.
         - expanded       - The icon used when an item is in it's expanded state.
-        - expandedTitle  - The icon title text (tool tip) when an item is in it's expanded state. When null, the default
-                           globalization value is used.
+        - expandedTitle  - The icon title text (tool tip) when an item is in it's expanded state. When null, the
+                           default globalization value is used.
 
 showFx: { effect: 'show', options: {}, duration: 'normal', callback: null }
     Animation options for expanding/showing expandable items.
