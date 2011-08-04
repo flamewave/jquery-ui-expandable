@@ -110,9 +110,9 @@
                 }
                 else
                 {
-                    head.addClass('ui-widget-header ui-expandable-header')
+                    head.addClass('ui-helper-reset ui-widget-header ui-expandable-header')
                         .addClass(v_is_expanded ? 'ui-corner-top' : 'ui-corner-all');
-                    content.addClass('ui-corner-bottom ui-widget-content ui-expandable-content')
+                    content.addClass('ui-helper-reset ui-corner-bottom ui-widget-content ui-expandable-content')
                         .after($('<div class="ui-expandable-spacer">&nbsp;</div>'));
                 }
 
