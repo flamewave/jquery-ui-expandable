@@ -1,5 +1,5 @@
 /*!
-* jQuery UI Expandable v1.1
+* jQuery UI Expandable v1.2
 *
 * Copyright 2011, Tony Kramer
 * Dual licensed under the MIT or GPL Version 2 licenses.
