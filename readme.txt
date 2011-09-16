@@ -153,10 +153,14 @@ expandable('collapse', [items])
     Collapses the specified items. The "items" parameter can be one of the following values:
      - null or undefined (parameter is omitted) - collapses all of the items.
      - jQuery object - collapses the items with the specified title HTML elements represented by the jQuery object.
+     - "first" or "last" - collapses the first or last item.
      - number - collapses the item with the specified (zero based) index.
      - array - Array items can be either number or string values.
          - Number values correspond to the (zero based) indexes to collapse.
          - String values correspond with the HTML ID attribute value of the title of the items to collapse.
+
+expandable('count')
+    Returns the number of items in the expandable widget.
 
 expandable('destroy')
     Remove the expandable functionality completely. This will return the element back to it's pre-init state.
@@ -186,12 +190,17 @@ expandable('option', name, [value])
 expandable('option', options)
     Sets the values of multiple options at once.
 
+expandable('refresh')
+    Refreshes and rebuilds the items of the expandable widget. Useful for if you want to add or remove items, so you
+    don't have to destroy and re-create the widget.
+
 expandable('setContent', items, [content])
     Sets the content of the specified item or items. The "items" parameter can be one of the following values:
      - jQuery object - The items with the title HTML elements represented by the jQuery object will have their content
                        set to the value of the "content" parameter.
      - number        - The item at the specified index will have it's content set to the value of the "content"
                        parameter.
+     - "first" or "last" - Sets the content of the first or last item.
      - string        - The item with a header element with the HTML ID attribute value of the string will have it's
                        content set to the value of the "content" parameter.
      - object        - Map of items and content to set. The value of the "content" parameter is ignored.

@@ -1,5 +1,5 @@
 /*!
-* jQuery UI Expandable v1.1
+* jQuery UI Expandable v1.2
 *
 * Copyright 2011, Tony Kramer
 * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -29,7 +29,7 @@
     // .ui-expandable-disabled {}
 
     $.widget('ui.expandable', {
-        version: '1.1',
+        version: '1.2',
         options: {
             disabled: false,
             defaultState: null,
@@ -92,15 +92,72 @@
 
             this.widget().addClass('ui-helper-reset ui-widget ui-expandable');
             this._headers = this.widget().find(this.options.titleSelector);
+            this._createExpandos();
+        },
+
+        destroy: function()
+        {
+            this.widget()
+                .removeData('expandable.ajaxLoaded')
+                .removeClass('ui-helper-reset ui-widget ui-expandable');
 
             var self = this, v_use_icon = this._useIcons();
             this._headers.each(function(i)
             {
-                var head = $(this),
-                    v_is_expanded = self._getItemStateFromObj(i, head, self.options.defaultState, true),
+                var head = $(this), content = self._getContentContainer(head);
+
+                head.removeClass('ui-widget-header ui-expandable-header ui-corner-top ui-corner-all ui-expandable-table-header')
+                    .unbind('click.expandable');
+
+                content.show().removeClass('ui-corner-bottom ui-widget-content ui-expandable-content ui-expandable-table-content');
+
+                if (!self._isTable)
+                    content.next().remove(); // remove the spacer
+
+                if (v_use_icon)
+                    self._removeIcon(head);
+            });
+
+            this._headers = null;
+            $.Widget.prototype.destroy.call(this);
+            return this;
+        },
+
+        refresh: function()
+        {
+            this._headers = this.widget().find(this.options.titleSelector);
+            this._createExpandos();
+        },
+
+        count: function()
+        {
+            return this._headers.length;
+        },
+
+        _createExpandos: function()
+        {
+            var self = this, v_use_icon = this._useIcons();
+            this._headers.each(function(i)
+            {
+                var head = $(this);
+                if (head.data('expandable.created') === true)
+                {
+                    if (head.data('expandable.index') !== i)
+                    {
+                        // Item's index has changed, most likely due to the addition or removal of items.
+                        head.data('expandable.index', i)
+                            .unbind('click.expandable')
+                            .bind('click.expandable', function() { self.toggle(i); });
+                    }
+                    return;
+                }
+
+                var v_is_expanded = self._getItemStateFromObj(i, head, self.options.defaultState, true),
                     content = self._getContentContainer(head);
 
-                head.bind('click', function() { self.toggle(i); });
+                head.data('expandable.created', true)
+                    .data('expandable.index', i)
+                    .bind('click.expandable', function() { self.toggle(i); });
                 content[v_is_expanded ? 'show' : 'hide']();
 
                 if (self._isTable)
@@ -119,34 +176,6 @@
                 if (v_use_icon)
                     self._addIcon(head, v_is_expanded);
             });
-        },
-
-        destroy: function()
-        {
-            this.widget()
-                .removeData('expandable.ajaxLoaded')
-                .removeClass('ui-helper-reset ui-widget ui-expandable');
-
-            var self = this, v_use_icon = this._useIcons();
-            this._headers.each(function(i)
-            {
-                var head = $(this), content = self._getContentContainer(head);
-
-                head.removeClass('ui-widget-header ui-expandable-header ui-corner-top ui-corner-all ui-expandable-table-header')
-                    .unbind('click', function() { self.toggle(i); });
-
-                content.show().removeClass('ui-corner-bottom ui-widget-content ui-expandable-content ui-expandable-table-content');
-
-                if (!self._isTable)
-                    content.next().remove(); // remove the spacer
-
-                if (v_use_icon)
-                    self._removeIcon(head);
-            });
-
-            this._headers = null;
-            $.Widget.prototype.destroy.call(this);
-            return this;
         },
 
         _useIcons: function()
@@ -388,6 +417,7 @@
 
         // items parameter:
         // jQuery object: title HTML element of item to set content
+        // "first" or "last": set content of the first or last item
         // number: set content by zero-based index
         // string: set content by HTML ID attribute value of title element
         // object: set content by object map (content parameter is ignored), must be in the following format: { itemTitleId: content, ... } or { itemIndex: content, ... } or a mix
@@ -410,7 +440,10 @@
 
             if (typeof items === 'string')
             {
-                this._setItemContent(this._headers.filter('#' + items), content, false, false);
+                if (items === 'first' || items === 'last')
+                    this._setItemContent(this._headers[items](), content, false, false);
+                else
+                    this._setItemContent(this._headers.filter('#' + items), content, false, false);
                 return this;
             }
 
@@ -511,6 +544,7 @@
 
         // items parameter:
         // - null or undefined (parameter is omitted) - all items
+        // - "first" or "last" - the first or last item
         // - jQuery object - item with specified title element
         // - number - item at specified (zero based) index
         // - array - elements can be number or string
@@ -526,6 +560,12 @@
                 if ($.isFunction(allEvent))
                     allEvent(this);
 
+                return;
+            }
+
+            if (items === 'first' || items === 'last')
+            {
+                callback.call(self, this._headers[items]());
                 return;
             }
 
