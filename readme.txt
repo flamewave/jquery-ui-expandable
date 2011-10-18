@@ -1,5 +1,5 @@
 /*!
-* jQuery UI Expandable v1.2
+* jQuery UI Expandable v1.2.1
 *
 * Copyright 2011, Tony Kramer
 * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -180,9 +180,11 @@ expandable('isExpanded', [items])
     Returns true if all of the specified items are expanded. See the "collapse" method for details on the "items"
     parameter.
 
-expandable('loadContent', [items])
+expandable('loadContent', [items], [force])
     Loads the content the specified items through AJAX requests. If AJAX loading is disabled, this method does nothing.
     See the "collapse" method for details on the "items" parameter.
+    The optional "force" parameter will force the content to be reloaded, even if it has already been loaded. It
+    essentially provides a way to refresh the content of one or more sections.
 
 expandable('option', name, [value])
     Gets or sets the value of the specified option.

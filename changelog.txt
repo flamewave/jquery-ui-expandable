@@ -19,3 +19,6 @@ Version 1.2 - September 15th 2011
  - Added the "refresh" and "count" methods.
  - Added support for "first" and "last" to be passed as a value to the "collapse", "disable", "enable", "isExpanded",
    "loadContent", "setContent", and "toggle" methods "items" parameter.
+
+Version 1.2.1 - October 18th 2011
+ - Added the "force" parameter to the "loadContent" method.

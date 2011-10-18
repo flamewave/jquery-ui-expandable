@@ -1,5 +1,5 @@
 /*!
-* jQuery UI Expandable v1.2
+* jQuery UI Expandable v1.2.1
 *
 * Copyright 2011, Tony Kramer
 * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -29,7 +29,7 @@
     // .ui-expandable-disabled {}
 
     $.widget('ui.expandable', {
-        version: '1.2',
+        version: '1.2.1',
         options: {
             disabled: false,
             defaultState: null,
@@ -407,10 +407,10 @@
 
         /*** Content Loading ***/
 
-        loadContent: function(items)
+        loadContent: function(items, force)
         {
             if (this.options.ajax && this.options.ajax.enabled === true && this.options.ajax.attr && this.options.ajax.attr.length)
-                this._parseItems(items, this._loadContent, null);
+                this._parseItems(items, function(head) { this._loadContent(head, force); }, null);
 
             return this;
         },
@@ -477,12 +477,12 @@
                 fn(this, head[0], item[0]);
         },
 
-        _loadContent: function(head)
+        _loadContent: function(head, force)
         {
             if (!head.length)
                 return;
 
-            if (this.options.ajax && this.options.ajax.enabled === true && this.options.ajax.attr && this.options.ajax.attr.length && (this.options.ajax.cache !== true || head.data('expandable.ajaxLoaded') !== true))
+            if (this.options.ajax && this.options.ajax.enabled === true && this.options.ajax.attr && this.options.ajax.attr.length && (force || this.options.ajax.cache !== true || head.data('expandable.ajaxLoaded') !== true))
             {
                 var url = head.attr(this.options.ajax.attr);
                 if (url.length)
