@@ -6,6 +6,7 @@
 * https://github.com/flamewave/jquery-ui-expandable/raw/master/GPL-LICENSE.txt
 * https://github.com/flamewave/jquery-ui-expandable/raw/master/MIT-LICENSE.txt
 *
+* For documentation and for the latest version, see:
 * https://github.com/flamewave/jquery-ui-expandable
 */
 

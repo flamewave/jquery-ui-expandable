@@ -5,16 +5,17 @@
 * Dual licensed under the MIT or GPL Version 2 licenses.
 * https://github.com/flamewave/jquery-ui-expandable/raw/master/GPL-LICENSE.txt
 * https://github.com/flamewave/jquery-ui-expandable/raw/master/MIT-LICENSE.txt
-*
-* https://github.com/flamewave/jquery-ui-expandable
 */
 
 /*
+* For documentation and for the latest version, see:
+* https://github.com/flamewave/jquery-ui-expandable
+*
 * -------------
 * Dependencies:
 * -------------
-* - jquery (1.4.2)
-* - jquery-ui (1.8.6 - core, widget)
+* - jquery (1.4.2 and up)
+* - jquery-ui (1.8.6 and up - core, widget)
 */
 (function($)
 {
