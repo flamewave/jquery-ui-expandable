@@ -1,5 +1,5 @@
 /*!
-* jQuery UI Expandable v1.2.1
+* jQuery UI Expandable v1.3
 *
 * Copyright 2011, Tony Kramer
 * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -93,72 +93,84 @@ icon: {collapsed: 'ui-icon-triangle-1-e', collapsedTitle: null, expanded: 'ui-ic
         - expandedTitle  - The icon title text (tool tip) when an item is in it's expanded state. When null, the
                            default globalization value is used.
 
-showFx: { effect: 'show', options: {}, duration: 'normal', callback: null }
-    Animation options for expanding/showing expandable items.
+showFx: { effect: 'slide', options: { direction: 'up' }, duration: 'normal', callback: null }
+    Animation options for expanding/showing expandable items. Setting this option to null will disable show
+    animations.
         - effect   - Name of jQuery animation.
         - options  - Options for enhanced animations.
         - duration - Animation duration/speed.
         - callback - A function to call once the animation is complete.
 
-hideFx: { effect: 'hide', options: {}, duration: 'normal', callback: null }
-    Animation options for collapsing/hiding expandable items.
+hideFx: { effect: 'slide', options: { direction: 'up' }, duration: 'normal', callback: null }
+    Animation options for collapsing/hiding expandable items. Setting this option to null will disable hide
+    animations.
         - effect   - Name of jQuery animation.
         - options  - Options for enhanced animations.
         - duration - Animation duration/speed.
         - callback - A function to call once the animation is complete.
 
-ajax: { enabled: false, attr: 'rel', cache: true, options: null, failedLoad: null }
-    AJAX options for loading the content of an item from an AJAX request when it is expanded.
+ajax: { enabled: false, attr: 'rel', cache: true, options: null }
+    AJAX options for loading the content of an item from an AJAX request when it is expanded. Settomg this option to
+    null will disable AJAX loading.
         - enabled    - Indicates if AJAX loading is enabled.
         - attr       - HTML attribute on the title element that contains the URL to load the content from.
         - cache      - Indicates if content is cached so that it is only loaded once instead of every time the item is
                        expanded.
         - options    - Options to pass to the jQuery AJAX method. Default options used are: { dataType: 'html' }
-        - failedLoad - Event that is raised when any item's content failed to load.
-                       Signature: void function(instance, titleHtmlElement, contentHtmlElement)
 
 ------
 Events
 ------
+All events follow the standard jQuery UI widget event signature: void function(event, ui)
+In most cases, the "event" parameter will be null. The "ui" parameter is an object with the following properties:
+    - head    - The HTML DOM element that is the header of the item. Null if the event is not associated with a
+                specific expandable item.
+    - content - The HTML DOM element that is the content of the item. Null if the event is not associated with a
+                specific expandable item.
+
 create
     Raised when the widget is created. Inherited from the jQuery widget object.
 
 expanded
     Raised when any item is expanded.
-    Signature: void function(instance, titleHtmlElement, contentHtmlElement)
 
 collapsed
     Raised when any item is collapsed.
-    Signature: void function(instance, titleHtmlElement, contentHtmlElement)
 
 contentSet
     Raised when any item's content has been set.
-    Signature: void function(instance, titleHtmlElement, contentHtmlElement)
+
+failedLoad
+    Raised when any item's content failed to load. Only used when AJAX loading is enabled.
 
 expandAll
-    Raised when all items are expanded (i.e. "expand()" is called with no parameters).
-    Signature: void function(instance)
+    Raised when all items are expanded (i.e. "expand()" is called with no parameters). This event is not associated
+    with any specific item, so the "head" and "content" properties of the "ui" parameter will be null.
 
 collapseAll
-    Raised when all items are collapsed (i.e. "collapse()" is called with no parameters).
-    Signature: void function(instance)
+    Raised when all items are collapsed (i.e. "collapse()" is called with no parameters). This event is not associated
+    with any specific item, so the "head" and "content" properties of the "ui" parameter will be null.
 
 toggleAll
-    Raised when all items are toggled (i.e. "toggle()" is called with no parameters).
-    Signature: void function(instance)
+    Raised when all items are toggled (i.e. "toggle()" is called with no parameters). This event is not associated
+    with any specific item, so the "head" and "content" properties of the "ui" parameter will be null.
 
 -------
 Methods
 -------
-expandable('collapse', [items])
+expandable('collapse'[, items, noFx, reload])
     Collapses the specified items. The "items" parameter can be one of the following values:
-     - null or undefined (parameter is omitted) - collapses all of the items.
-     - jQuery object - collapses the items with the specified title HTML elements represented by the jQuery object.
-     - "first" or "last" - collapses the first or last item.
-     - number - collapses the item with the specified (zero based) index.
-     - array - Array items can be either number or string values.
+     - null or undefined - Collapses all of the items.
+     - function          - A function that returns one of the below values to specify the items to collapse. Can not
+                           return null or undefined or an error will be thrown.
+     - jQuery object     - Collapses the items with the specified title HTML elements represented by the jQuery object.
+     - "first" or "last" - Collapses the first or last item.
+     - number            - Collapses the item with the specified (zero based) index.
+     - array             - Array items can be either number or string values.
          - Number values correspond to the (zero based) indexes to collapse.
          - String values correspond with the HTML ID attribute value of the title of the items to collapse.
+    If the "noFx" parameter is "true", then animations will be disabled when collapsing the items (only for this call).
+    If the "reload" parameter is "true" and AJAX loading is enabled, then the item's content will be reloaded via AJAX.
 
 expandable('count')
     Returns the number of items in the expandable widget.
@@ -166,28 +178,28 @@ expandable('count')
 expandable('destroy')
     Remove the expandable functionality completely. This will return the element back to it's pre-init state.
 
-expandable('disable', [items])
+expandable('disable'[, items])
     Disables the widget or optionally just the specified items. See the "collapse" method for details on the "items"
     parameter.
 
-expandable('enable', [items])
+expandable('enable'[, items])
     Enables the widget or optionally just the specified items. See the "collapse" method for details on the "items"
     parameter.
 
-expandable('expand', [items])
-    Expands the specified items. See the "collapse" method for details on the "items" parameter.
+expandable('expand'[, items, noFx])
+    Expands the specified items. See the "collapse" method for details on the parameters.
 
-expandable('isExpanded', [items])
+expandable('isExpanded'[, items])
     Returns true if all of the specified items are expanded. See the "collapse" method for details on the "items"
     parameter.
 
-expandable('loadContent', [items], [force])
+expandable('loadContent'[, items, force])
     Loads the content the specified items through AJAX requests. If AJAX loading is disabled, this method does nothing.
     See the "collapse" method for details on the "items" parameter.
     The optional "force" parameter will force the content to be reloaded, even if it has already been loaded. It
     essentially provides a way to refresh the content of one or more sections.
 
-expandable('option', name, [value])
+expandable('option', name[, value])
     Gets or sets the value of the specified option.
 
 expandable('option', options)
@@ -197,8 +209,10 @@ expandable('refresh')
     Refreshes and rebuilds the items of the expandable widget. Useful for if you want to add or remove items, so you
     don't have to destroy and re-create the widget.
 
-expandable('setContent', items, [content])
+expandable('setContent', items[, content])
     Sets the content of the specified item or items. The "items" parameter can be one of the following values:
+     - function      - A function that returns one of the below values to specify the items to set the content of. Can
+                       not return null or undefined or an error will be thrown.
      - jQuery object - The items with the title HTML elements represented by the jQuery object will have their content
                        set to the value of the "content" parameter.
      - number        - The item at the specified index will have it's content set to the value of the "content"
@@ -209,22 +223,37 @@ expandable('setContent', items, [content])
      - object        - Map of items and content to set. The value of the "content" parameter is ignored.
                        Supported formats:
                        - Header element ID.
-                         Example: { "firstItem": "content for the 1st item", ... }
+                         Example: {
+                            "firstItem": "content for the 1st item",
+                            "second": function() { return "content for 2nd item"; },
+                            ...
+                         }
                        - Index of item (zero based).
-                         Example: { 1: "content for the 2nd item", ... }
+                         Example: {
+                            1: "content for the 2nd item",
+                            2: function() { return "content for 3rd item"; },
+                            ...
+                         }
                        - Mix of the two above.
-                         Example: { "firstItem": "content for the 1st item, 1: "content for the 2nd item" }
+                         Example: {
+                            "firstItem": "content for the 1st item,
+                            1: function() { return "content for the 2nd item"; },
+                            ...
+                         }
+    The "content" parameter can be either a string containing the content, or a function that returns the content.
 
-expandable('setItemStates', [state])
+expandable('setItemStates'[, state, noFx, reload])
     Sets the items to the specified state. See the "defaultState" option for details on accepted values of the "state"
-    parameter.
+    parameter. If the "noFx" parameter is "true", then no animations will be used when setting the item states. If the
+    "reload" parameter is "true" and AJAX loading is enabled, then items being expanded will have their content
+    reloaded via AJAX.
 
-expandable('toggle', [items])
-    Toggles the state of the specified items. See the "collapse" method for details on the "items" parameter.
+expandable('toggle'[, items, noFx, reload])
+    Toggles the state of the specified items. See the "collapse" method for details on the parameters.
 
 expandable('widget')
     Returns the element.
-    
+
 -------------
 Globalization
 -------------

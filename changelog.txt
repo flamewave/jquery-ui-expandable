@@ -22,3 +22,23 @@ Version 1.2 - September 15th 2011
 
 Version 1.2.1 - October 18th 2011
  - Added the "force" parameter to the "loadContent" method.
+
+Version 1.3 - October 26th 2011
+ - Updated all internal references to this.widget() to use this.element instead.
+ - Bug fix: when using AJAX loading, items with a default state set to be expanded would not automatically load their
+   content.
+ - Updated all events to be fired using the _trigger() method of the widget factory. This included moving the
+   "failedLoad" event outside of the "ajax" option to be a root-level option/event.
+ - Changed the default animation to be "slide up" if it is available, otherwise use the default jQuery animation.
+ - Streamlined the animation code for the expandos.
+ - Bug fix: made sure items exist before calling methods off of them so that "property undefined" errors would not
+   occasionally occur.
+ - Added the "noFx" and "reload" parameters to the "setItemStates" method.
+ - Added the "noFx" and "reload" parameters to the "toggle" method.
+ - Added the "noFx" and "reload" parameters to the "expand" method.
+ - Added the "noFx" parameter to the "collapse" method.
+ - Added support for string values of the "items" parameter of the "collapse", "disable", "enable", "isExpanded",
+   "loadContent", and "toggle" methods.
+ - Added support for function values of the "items" parameter of the "collapse", "disable", "enable", "isExpanded",
+   "loadContent", "setContent", and "toggle" methods.
+ - Added support for function values for the content and object has values of the "setContent" method.

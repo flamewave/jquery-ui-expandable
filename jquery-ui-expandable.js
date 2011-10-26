@@ -1,5 +1,5 @@
 /*!
-* jQuery UI Expandable v1.2.1
+* jQuery UI Expandable v1.3
 *
 * Copyright 2011, Tony Kramer
 * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -30,7 +30,7 @@
     // .ui-expandable-disabled {}
 
     $.widget('ui.expandable', {
-        version: '1.2.1',
+        version: '1.3',
         options: {
             disabled: false,
             defaultState: null,
@@ -41,21 +41,15 @@
                 expanded: 'ui-icon-triangle-1-s',
                 expandedTitle: null
             },
-            expanded: null,
-            collapsed: null,
-            contentSet: null,
-            expandAll: null,
-            collapseAll: null,
-            toggleAll: null,
             showFx: {
-                effect: 'show',
-                options: {},
+                effect: 'slide',
+                options: { direction: 'up' },
                 duration: 'normal',
                 callback: null
             },
             hideFx: {
-                effect: 'hide',
-                options: {},
+                effect: 'slide',
+                options: { direction: 'up' },
                 duration: 'normal',
                 callback: null
             },
@@ -63,8 +57,7 @@
                 enabled: false,
                 attr: 'rel',
                 cache: true,
-                options: null,
-                failedLoad: null
+                options: null
             }
         },
 
@@ -78,7 +71,7 @@
 
         _create: function()
         {
-            this._isTable = this.widget().attr('tagName').toLowerCase() === 'table';
+            this._isTable = this.element.attr('tagName').toLowerCase() === 'table';
 
             // Set default title selector for tables if one hasn't been provided and the element is a table.
             if (this._isTable && (!this.options.titleSelector || !this.options.titleSelector.length || this.options.titleSelector.toLowerCase() === '> h3'))
@@ -91,15 +84,14 @@
                 this._getIconContainer = function(head) { return head.find('th,td').first(); };
             }
 
-            this.widget().addClass('ui-helper-reset ui-widget ui-expandable');
-            this._headers = this.widget().find(this.options.titleSelector);
+            this.element.addClass('ui-helper-reset ui-widget ui-expandable');
+            this._headers = this.element.find(this.options.titleSelector);
             this._createExpandos();
         },
 
         destroy: function()
         {
-            this.widget()
-                .removeData('expandable.ajaxLoaded')
+            this.element.removeData('expandable.ajaxLoaded')
                 .removeClass('ui-helper-reset ui-widget ui-expandable');
 
             var self = this, v_use_icon = this._useIcons();
@@ -126,7 +118,7 @@
 
         refresh: function()
         {
-            this._headers = this.widget().find(this.options.titleSelector);
+            this._headers = this.element.find(this.options.titleSelector);
             this._createExpandos();
         },
 
@@ -160,6 +152,10 @@
                     .data('expandable.index', i)
                     .bind('click.expandable', function() { self.toggle(i); });
                 content[v_is_expanded ? 'show' : 'hide']();
+
+                // Make sure the item's content is loaded if the item's default state is expanded.
+                if (v_is_expanded)
+                    self._loadContent(head);
 
                 if (self._isTable)
                 {
@@ -245,7 +241,8 @@
                 items,
                 function(head)
                 {
-                    head.add(this._getContentContainer(head)).addClass('ui-expandable-disabled ui-state-disabled');
+                    if (head && head.length)
+                        head.add(this._getContentContainer(head)).addClass('ui-expandable-disabled ui-state-disabled');
                 },
                 null
             );
@@ -259,7 +256,8 @@
                 items,
                 function(head)
                 {
-                    head.add(this._getContentContainer(head)).removeClass('ui-expandable-disabled ui-state-disabled');
+                    if (head && head.length)
+                        head.add(this._getContentContainer(head)).removeClass('ui-expandable-disabled ui-state-disabled');
                 },
                 null
             );
@@ -275,9 +273,6 @@
                 items,
                 function(head)
                 {
-                    if (!head.length)
-                        return;
-
                     if (!this._isExpanded(head))
                     {
                         v_is_expanded = false;
@@ -289,13 +284,13 @@
             return v_is_expanded;
         },
 
-        setItemStates: function(state)
+        setItemStates: function(state, noFx, reload)
         {
             if (this.options.disabled)
                 return this;
 
             if (state === undefined || state === null)
-                this.collapse();
+                this.collapse(null, noFx);
             else
             {
                 var self = this;
@@ -303,54 +298,54 @@
                 {
                     var head = $(this);
                     if (self._getItemStateFromObj(i, head, state, false))
-                        self._expandItem(head);
+                        self._expandItem(head, noFx, reload);
                     else
-                        self._collapseItem(head);
+                        self._collapseItem(head, noFx);
                 });
             }
             return this;
         },
 
-        toggle: function(items)
+        toggle: function(items, noFx, reload)
         {
             if (!this.options.disabled)
-                this._parseItems(items, this._toggleItem, this.options.toggleAll);
+                this._parseItems(items, function(head) { this._toggleItem(head, noFx, reload); }, 'toggleAll');
             return this;
         },
 
-        expand: function(items)
+        expand: function(items, noFx, reload)
         {
             if (!this.options.disabled)
-                this._parseItems(items, this._expandItem, this.options.expandAll);
+                this._parseItems(items, function(head) { this._expandItem(head, noFx, reload); }, 'expandAll');
             return this;
         },
 
-        collapse: function(items)
+        collapse: function(items, noFx)
         {
             if (!this.options.disabled)
-                this._parseItems(items, this._collapseItem, this.options.collapseAll);
+                this._parseItems(items, function(head) { this._collapseItem(head, noFx); }, 'collapseAll');
             return this;
         },
 
         _isExpanded: function(head)
         {
-            return this._getContentContainer(head).is(':visible');
+            return head && head.length && this._getContentContainer(head).is(':visible');
         },
 
-        _toggleItem: function(head)
+        _toggleItem: function(head, noFx, reload)
         {
-            if (!head.length || this.options.disabled)
+            if (!head || !head.length || this.options.disabled)
                 return;
 
             if (this._isExpanded(head))
-                this._collapseItem(head);
+                this._collapseItem(head, noFx);
             else
-                this._expandItem(head);
+                this._expandItem(head, noFx, reload);
         },
 
-        _expandItem: function(head)
+        _expandItem: function(head, noFx, reload)
         {
-            if (!head.length || this.options.disabled)
+            if (!head || !head.length || this.options.disabled)
                 return;
 
             head.find('.ui-expandable-icon')
@@ -362,25 +357,39 @@
                 head.removeClass('ui-corner-all').addClass('ui-corner-top');
 
             var content = this._getContentContainer(head);
-            if (this.options.showFx)
+            if (this.options.showFx && noFx !== true)
             {
+                var _self = this,
+                    _duration = typeof this.options.showFx.duration === 'string' ? this.options.showFx.duration : this.options.showFx.duration || 400,
+                    _complete = function()
+                    {
+                        if ($.isFunction(_self.options.showFx.callback))
+                            _self.options.showFx.callback();
+
+                        _self._trigger('expanded', null, { head: head[0], content: content[0] });
+                        _self._loadContent(head, reload);
+                    };
+
                 if ($.effects && $.effects[this.options.showFx.effect])
-                    content.show(this.options.showFx.effect, this.options.showFx.options, this.options.showFx.duration, this.options.showFx.callback);
+                    content.show(this.options.showFx.effect, this.options.showFx.options, _duration, _complete);
+
+                else if (this.options.showFx.effect && content[this.options.showFx.effect])
+                    content[this.options.showFx.effect](_duration, _complete);
+
                 else
-                    content[this.options.showFx.effect || 'show']((this.options.showFx.effect ? this.options.showFx.duration : null), this.options.showFx.callback);
+                    content.show(_duration, _complete);
             }
             else
+            {
                 content.show();
-
-            if ($.isFunction(this.options.expanded))
-                this.options.expanded(this, head[0], content[0]);
-
-            this._loadContent(head);
+                this._trigger('expanded', null, { head: head[0], content: content[0] });
+                this._loadContent(head, reload);
+            }
         },
 
-        _collapseItem: function(head)
+        _collapseItem: function(head, noFx)
         {
-            if (!head.length || this.options.disabled)
+            if (!head || !head.length || this.options.disabled)
                 return;
 
             head.find('.ui-expandable-icon')
@@ -392,18 +401,32 @@
                 head.removeClass('ui-corner-top').addClass('ui-corner-all');
 
             var content = this._getContentContainer(head);
-            if (this.options.hideFx)
+            if (this.options.hideFx && noFx !== true)
             {
+                var _self = this,
+                    _duration = typeof this.options.hideFx.duration === 'string' ? this.options.hideFx.duration : this.options.hideFx.duration || 400,
+                    _complete = function()
+                    {
+                        if ($.isFunction(_self.options.hideFx.callback))
+                            _self.options.hideFx.callback();
+
+                        _self._trigger('collapsed', null, { head: head[0], content: content[0] });
+                    };
+
                 if ($.effects && $.effects[this.options.hideFx.effect])
-                    content.hide(this.options.hideFx.effect, this.options.hideFx.options, this.options.hideFx.duration, this.options.hideFx.callback);
+                    content.hide(this.options.hideFx.effect, this.options.hideFx.options, _duration, _complete);
+
+                else if (content[this.options.hideFx.effect])
+                    content[this.options.hideFx.effect](_duration, _complete);
+
                 else
-                    content[(this.options.hideFx.effect == 'slideDown' ? 'slideUp' : (this.options.hideFx.effect == 'fadeIn' ? 'fadeOut' : 'hide'))]((this.options.hideFx.effect ? this.options.hideFx.duration : null), this.options.hideFx.callback);
+                    content.hide(_duration, _complete);
             }
             else
+            {
                 content.hide();
-
-            if ($.isFunction(this.options.collapsed))
-                this.options.collapsed(this, head[0], content[0]);
+                this._trigger('collapsed', null, { head: head[0], content: content[0] });
+            }
         },
 
         /*** Content Loading ***/
@@ -427,16 +450,11 @@
             if (items === undefined || items === null)
                 throw 'No items specified.';
 
-            if (items instanceof jQuery)
+            if ($.isFunction(items))
             {
-                this._setItemContent(items, content, false, false);
-                return this;
-            }
-
-            if (typeof items === 'number' && items >= 0)
-            {
-                this._setItemContent(this._headers.eq(items), content, false, false);
-                return this;
+                items = items();
+                if (items === undefined || items === null)
+                    throw 'Function given to items parameter can not return an undefined or null value.';
             }
 
             if (typeof items === 'string')
@@ -448,16 +466,32 @@
                 return this;
             }
 
+            if (typeof items === 'number' && items >= 0)
+            {
+                this._setItemContent(this._headers.eq(items), content, false, false);
+                return this;
+            }
+
+            if (items instanceof jQuery)
+            {
+                if (items.length === 1)
+                    this._setItemContent(items, content, false, false);
+
+                else if (items.length > 1)
+                {
+                    var self = this;
+                    items.each(function() { self._setItemContent($(this), content, false, false); });
+                }
+                return this;
+            }
+
             for (var k in items)
             {
-                if (typeof items[k] === 'string')
-                {
-                    var index = parseInt(k);
-                    if (!isNaN(index) && index >= 0)
-                        this._setItemContent(this._headers.eq(index), items[k], false, false);
-                    else
-                        this._setItemContent(this._headers.filter('#' + k), items[k], false, false);
-                }
+                var index = parseInt(k);
+                if (!isNaN(index) && index >= 0)
+                    this._setItemContent(this._headers.eq(index), items[k], false, false);
+                else
+                    this._setItemContent(this._headers.filter('#' + k), items[k], false, false);
             }
 
             return this;
@@ -465,28 +499,29 @@
 
         _setItemContent: function(head, content, isAjaxLoad, isFailedLoad)
         {
-            if (!head.length)
+            if (!head || !head.length)
                 return;
+
+            if ($.isFunction(content))
+                content = content(head[0]);
 
             var item = this._getContentElement(head).html(content);
 
             if (isAjaxLoad && this.options.ajax.cache === true)
                 head.data('expandable.ajaxLoaded', !isFailedLoad);
 
-            var fn = isAjaxLoad && isFailedLoad ? this.options.ajax.failedLoad : this.options.contentSet;
-            if ($.isFunction(fn))
-                fn(this, head[0], item[0]);
+            this._trigger(isAjaxLoad && isFailedLoad ? 'failedLoad' : 'contentSet', null, { head: head[0], content: item[0] });
         },
 
         _loadContent: function(head, force)
         {
-            if (!head.length)
+            if (!head || !head.length)
                 return;
 
             if (this.options.ajax && this.options.ajax.enabled === true && this.options.ajax.attr && this.options.ajax.attr.length && (force || this.options.ajax.cache !== true || head.data('expandable.ajaxLoaded') !== true))
             {
                 var url = head.attr(this.options.ajax.attr);
-                if (url.length)
+                if (url && url.length)
                 {
                     var success = this.options.ajax.options && $.isFunction(this.options.ajax.options.success) ? this.options.ajax.options.success : null;
                     var error = this.options.ajax.options && $.isFunction(this.options.ajax.options.error) ? this.options.ajax.options.error : null;
@@ -545,9 +580,11 @@
 
         // items parameter:
         // - null or undefined (parameter is omitted) - all items
+        // - function - a function that returns one of the other accepted parameter values (besided null or undefined) to represent the item(s)
         // - "first" or "last" - the first or last item
-        // - jQuery object - item with specified title element
+        // - string - item whose title HTML ID attribute value is the string value
         // - number - item at specified (zero based) index
+        // - jQuery object - item with specified title element
         // - array - elements can be number or string
         //            - number: item at specified (zero based) index
         //            - string: item whose title HTML ID attribute value is the string value
@@ -558,32 +595,46 @@
             {
                 this._headers.each(function() { return callback.call(self, $(this)); });
 
-                if ($.isFunction(allEvent))
-                    allEvent(this);
+                if (typeof allEvent === 'string' && allEvent.length)
+                    this._trigger(allEvent, null, null);
 
                 return;
             }
 
-            if (items === 'first' || items === 'last')
+            if ($.isFunction(items))
             {
-                callback.call(self, this._headers[items]());
+                items = items();
+                if (items === undefined || items === null)
+                    throw 'Function given to items parameter can not return an undefined or null value.';
+            }
+
+            if (typeof items === 'string')
+            {
+                if (!items.length)
+                    throw 'items can not be an empty string.';
+
+                else if (items === 'first' || items === 'last')
+                    callback.call(this, this._headers[items]());
+
+                else
+                    callback.call(this, this._headers.filter('#' + items));
+                return;
+            }
+
+            if (typeof items === 'number' && items >= 0)
+            {
+                callback.call(this, this._headers.eq(items));
                 return;
             }
 
             if (items instanceof jQuery)
             {
                 if (items.length === 1)
-                    callback.call(self, items);
+                    callback.call(this, items);
 
                 else if (items.length > 1)
                     items.each(function() { return callback.call(self, $(this)); });
 
-                return;
-            }
-
-            if (typeof items === 'number' && items >= 0)
-            {
-                callback.call(self, this._headers.eq(items));
                 return;
             }
 
@@ -593,21 +644,21 @@
                 {
                     if (typeof items[i] === 'number' && items[i] >= 0)
                     {
-                        if (callback.call(self, this._headers.eq(items[i])) === false)
+                        if (callback.call(this, this._headers.eq(items[i])) === false)
                             break;
                     }
-                    else if (typeof items[i] === 'string')
+                    else if (typeof items[i] === 'string' && items[i].length)
                     {
-                        if (callback.call(self, this._headers.filter('#' + items[i])) === false)
+                        if (callback.call(this, this._headers.filter('#' + items[i])) === false)
                             break;
                     }
                     else
-                        throw 'Array items must be either a non-negative number or a string.';
+                        throw 'Array items must be either a non-negative number or a non-empty string.';
                 }
                 return;
             }
 
-            throw 'items parameter must be either a non-negative number or an array of (non-negative) numbers and/or HTML ID attribute string values.';
+            throw 'items parameter must be either a function, non-empty string, non-negative number, jQuery object instance, or an array of (non-negative) numbers and/or HTML ID attribute string values.';
         }
     });
 
