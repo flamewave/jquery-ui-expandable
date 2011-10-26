@@ -42,3 +42,6 @@ Version 1.3 - October 26th 2011
  - Added support for function values of the "items" parameter of the "collapse", "disable", "enable", "isExpanded",
    "loadContent", "setContent", and "toggle" methods.
  - Added support for function values for the content and object has values of the "setContent" method.
+ - Bug fix: when disabling specified items, all items would no longer be able to be expanded or collapsed.
+ - Bug fix: when collapsing or expanding items, logic to expand/collapse the item would still be executed even if
+   the item was already expanded/collapsed.

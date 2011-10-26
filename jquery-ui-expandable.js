@@ -236,7 +236,7 @@
 
         disable: function(items)
         {
-            this.options.disabled = true;
+            this.options.disabled = !items;
             this._parseItems(
                 items,
                 function(head)
@@ -251,7 +251,7 @@
 
         enable: function(items)
         {
-            this.options.disabled = false;
+            this.options.disabled = !!items;
             this._parseItems(
                 items,
                 function(head)
@@ -334,7 +334,7 @@
 
         _toggleItem: function(head, noFx, reload)
         {
-            if (!head || !head.length || this.options.disabled)
+            if (!head || !head.length || head.hasClass('ui-state-disabled'))
                 return;
 
             if (this._isExpanded(head))
@@ -345,7 +345,7 @@
 
         _expandItem: function(head, noFx, reload)
         {
-            if (!head || !head.length || this.options.disabled)
+            if (!head || !head.length || head.hasClass('ui-state-disabled') || this._isExpanded(head))
                 return;
 
             head.find('.ui-expandable-icon')
@@ -389,7 +389,7 @@
 
         _collapseItem: function(head, noFx)
         {
-            if (!head || !head.length || this.options.disabled)
+            if (!head || !head.length || head.hasClass('ui-state-disabled') || !this._isExpanded(head))
                 return;
 
             head.find('.ui-expandable-icon')
