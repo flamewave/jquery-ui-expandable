@@ -1,7 +1,7 @@
 /*!
-* jQuery UI Expandable v1.3
+* jQuery UI Expandable v1.4
 *
-* Copyright 2011, Tony Kramer
+* Copyright 2012, Tony Kramer
 * Dual licensed under the MIT or GPL Version 2 licenses.
 * https://github.com/flamewave/jquery-ui-expandable/raw/master/GPL-LICENSE.txt
 * https://github.com/flamewave/jquery-ui-expandable/raw/master/MIT-LICENSE.txt
@@ -30,7 +30,7 @@
     // .ui-expandable-disabled {}
 
     $.widget('ui.expandable', {
-        version: '1.3',
+        version: '1.4',
         options: {
             disabled: false,
             defaultState: null,
@@ -58,31 +58,50 @@
                 attr: 'rel',
                 cache: true,
                 options: null
-            }
+            },
+
+            // Advanced options
+            noWidgetClasses: false,
+            contentElement: null, // jQueryObject function(jQueryObject head) : returns the element that contains the item's HTML content.
+            contentContainer: null, // jQueryObject function(jQueryObject head) : returns the element that is the item's container element of the content and is the element that is hidden and shown.
+            iconContainer: null, // jQueryObject function(jQueryObject head) : returns the element that is the item's container element of the arrow icon.
         },
 
         _isTable: false,
         _headers: null,
-        _getContentElement: function(head) { return head.next(); }, // returns the element that contains the item's HTML content.
-        _getContentContainer: function(head) { return head.next(); }, // returns the element that is the item's container element of the content and is the element that is hidden and shown.
-        _getIconContainer: function(head) { return head; }, // returns the element that is the item's container element of the arrow icon.
 
         /*** Creation/destruction ***/
 
         _create: function()
         {
-            this._isTable = this.element.attr('tagName').toLowerCase() === 'table';
-
-            // Set default title selector for tables if one hasn't been provided and the element is a table.
-            if (this._isTable && (!this.options.titleSelector || !this.options.titleSelector.length || this.options.titleSelector.toLowerCase() === '> h3'))
-                this.options.titleSelector = '> tbody > tr:even';
-
-            // Set our element selectors that are used when the element is a table.
-            if (this._isTable)
+            var options = this.options;
+            if (this.element.attr('tagName').toLowerCase() === 'table')
             {
-                this._getContentElement = function(head) { return head.next().children('td,th').first(); };
-                this._getIconContainer = function(head) { return head.find('th,td').first(); };
+                this._isTable = true;
+
+                // Set default title selector for tables if one hasn't been provided and the element is a table.
+                if (!options.titleSelector || options.titleSelector.toLowerCase() === '> h3')
+                    options.titleSelector = '> tbody > tr:even';
+
+                // Set our element selectors that are used when the element is a table (if custom ones aren't provided.
+                if (!options.contentElement)
+                    options.contentElement = function(head) { return head.next().children('td,th').first(); };
+
+                if (!options.iconContainer)
+                    options.iconContainer = function(head) { return head.find('th,td').first(); };
             }
+            else
+            {
+                // Make sure we have element selectors if custom ones were not provided.
+                if (!options.contentElement)
+                    options.contentElement = function(head) { return head.next(); };
+
+                if (!options.iconContainer)
+                    options.iconContainer = function(head) { return head; };
+            }
+
+            if (!options.contentContainer)
+                options.contentContainer = function(head) { return head.next(); };
 
             this.element.addClass('ui-helper-reset ui-widget ui-expandable');
             this._headers = this.element.find(this.options.titleSelector);
@@ -94,21 +113,21 @@
             this.element.removeData('expandable.ajaxLoaded')
                 .removeClass('ui-helper-reset ui-widget ui-expandable');
 
-            var self = this, v_use_icon = this._useIcons();
+            var $this = this, v_use_icon = this._useIcons();
             this._headers.each(function(i)
             {
-                var head = $(this), content = self._getContentContainer(head);
+                var head = $(this), content = $this.options.contentContainer(head);
 
                 head.removeClass('ui-widget-header ui-expandable-header ui-corner-top ui-corner-all ui-expandable-table-header')
                     .unbind('click.expandable');
 
                 content.show().removeClass('ui-corner-bottom ui-widget-content ui-expandable-content ui-expandable-table-content');
 
-                if (!self._isTable)
+                if (!$this._isTable)
                     content.next().remove(); // remove the spacer
 
                 if (v_use_icon)
-                    self._removeIcon(head);
+                    $this._removeIcon(head);
             });
 
             this._headers = null;
@@ -129,7 +148,7 @@
 
         _createExpandos: function()
         {
-            var self = this, v_use_icon = this._useIcons();
+            var $this = this, options = this.options, v_use_icon = this._useIcons();
             this._headers.each(function(i)
             {
                 var head = $(this);
@@ -140,71 +159,83 @@
                         // Item's index has changed, most likely due to the addition or removal of items.
                         head.data('expandable.index', i)
                             .unbind('click.expandable')
-                            .bind('click.expandable', function() { self.toggle(i); });
+                            .bind('click.expandable', function() { $this.toggle(i); });
                     }
                     return;
                 }
 
-                var v_is_expanded = self._getItemStateFromObj(i, head, self.options.defaultState, true),
-                    content = self._getContentContainer(head);
+                var v_is_expanded = head.data('expanded') ? true : $this._getItemStateFromObj(i, head, options.defaultState, true),
+                    content = options.contentContainer(head);
 
                 head.data('expandable.created', true)
                     .data('expandable.index', i)
-                    .bind('click.expandable', function() { self.toggle(i); });
+                    .bind('click.expandable', function() { $this.toggle(i); });
                 content[v_is_expanded ? 'show' : 'hide']();
 
                 // Make sure the item's content is loaded if the item's default state is expanded.
                 if (v_is_expanded)
-                    self._loadContent(head);
+                    $this._loadContent(head);
 
-                if (self._isTable)
+                if ($this._isTable)
                 {
                     head.addClass('ui-expandable-table-header');
                     content.addClass('ui-expandable-table-content');
                 }
                 else
                 {
-                    head.addClass('ui-helper-reset ui-widget-header ui-expandable-header')
-                        .addClass(v_is_expanded ? 'ui-corner-top' : 'ui-corner-all');
-                    content.addClass('ui-helper-reset ui-corner-bottom ui-widget-content ui-expandable-content')
-                        .after($('<div class="ui-expandable-spacer">&nbsp;</div>'));
+                    if (options.noWidgetClasses)
+                    {
+                        head.addClass('ui-expandable-header');
+                        content.addClass('ui-expandable-content');
+                    }
+                    else
+                    {
+                        head.addClass('ui-helper-reset ui-widget-header ui-expandable-header')
+                            .addClass(v_is_expanded ? 'ui-corner-top' : 'ui-corner-all');
+
+                        content.addClass('ui-helper-reset ui-corner-bottom ui-widget-content ui-expandable-content');
+                    }
+
+                    content.after($('<div class="ui-expandable-spacer"></div>'));
                 }
 
                 if (v_use_icon)
-                    self._addIcon(head, v_is_expanded);
+                    $this._addIcon(head, v_is_expanded);
             });
         },
 
         _useIcons: function()
         {
-            return this.options.icon !== undefined
-                && this.options.icon !== null
-                && typeof this.options.icon.collapsed === 'string'
-                && this.options.icon.collapsed.length > 0
-                && typeof this.options.icon.expanded === 'string'
-                && this.options.icon.expanded.length > 0;
+            var icon = this.options.icon;
+            return icon !== undefined
+                && icon !== null
+                && typeof icon.collapsed === 'string'
+                && icon.collapsed.length > 0
+                && typeof icon.expanded === 'string'
+                && icon.expanded.length > 0;
         },
 
         _addIcon: function(head, isExpanded)
         {
-            this._getIconContainer(head)
+            var options = this.options;
+            options.iconContainer(head)
                 .prepend(
-                    $('<span class="ui-icon ui-expandable-icon">&nbsp;<\/span>')
-                        .addClass(isExpanded ? this.options.icon.expanded : this.options.icon.collapsed)
-                        .attr('title', isExpanded ? (this.options.icon.expandedTitle || $.ui.expandable.globalization.defaultIconExpandedTitle) : (this.options.icon.collapsedTitle || $.ui.expandable.globalization.defaultIconCollapsedTitle))
+                    $('<span class="ui-icon ui-expandable-icon"><\/span>')
+                        .addClass(isExpanded ? options.icon.expanded : options.icon.collapsed)
+                        .attr('title', isExpanded ? (options.icon.expandedTitle || $.ui.expandable.globalization.defaultIconExpandedTitle) : (options.icon.collapsedTitle || $.ui.expandable.globalization.defaultIconCollapsedTitle))
                 );
         },
 
         _removeIcon: function(head)
         {
-            this._getIconContainer(head).children('.ui-expandable-icon').remove();
+            this.options.iconContainer(head).children('.ui-expandable-icon').remove();
         },
 
         /*** Option setting ***/
 
         _setOption: function(key, value)
         {
-            var self = this;
+            var $this = this;
             switch (key)
             {
                 case 'disabled':
@@ -218,13 +249,25 @@
                     this._headers.each(function()
                     {
                         var head = $(this);
-                        self._removeIcon(head);
-                        self._addIcon(head, self._isExpanded(head));
+                        $this._removeIcon(head);
+                        $this._addIcon(head, $this._isExpanded(head));
                     });
 
                 case 'defaultState':
                 case 'titleSelector':
-                    throw key + ' option can only be set on creation.';
+                case 'noWidgetClasses':
+                case 'contentElement':
+                case 'contentContainer':
+                case 'iconContainer':
+                    if (window.console)
+                    {
+                        var msg = 'Expandable: ' + key + ' option can only be set on creation.';
+                        if (console.warn)
+                            console.warn(msg);
+                        else if (console.log)
+                            console.log(msg);
+                    }
+                    break;
 
                 default:
                     $.Widget.prototype._setOption.call(this, key, value);
@@ -242,7 +285,7 @@
                 function(head)
                 {
                     if (head && head.length)
-                        head.add(this._getContentContainer(head)).addClass('ui-expandable-disabled ui-state-disabled');
+                        head.add(this.options.contentContainer(head)).addClass('ui-expandable-disabled ui-state-disabled');
                 },
                 null
             );
@@ -257,7 +300,7 @@
                 function(head)
                 {
                     if (head && head.length)
-                        head.add(this._getContentContainer(head)).removeClass('ui-expandable-disabled ui-state-disabled');
+                        head.add(this.options.contentContainer(head)).removeClass('ui-expandable-disabled ui-state-disabled');
                 },
                 null
             );
@@ -329,7 +372,7 @@
 
         _isExpanded: function(head)
         {
-            return head && head.length && this._getContentContainer(head).is(':visible');
+            return head && head.length && this.options.contentContainer(head).is(':visible');
         },
 
         _toggleItem: function(head, noFx, reload)
@@ -348,33 +391,36 @@
             if (!head || !head.length || head.hasClass('ui-state-disabled') || this._isExpanded(head))
                 return;
 
-            head.find('.ui-expandable-icon')
-                .removeClass(this.options.icon.collapsed)
-                .addClass(this.options.icon.expanded)
-                .attr('title', this.options.icon.expandedTitle || $.ui.expandable.globalization.defaultIconExpandedTitle);
+            var options = this.options, showFx = options.showFx, content = options.contentContainer(head);
+            if (this._trigger('beforeExpand', null, { head: head[0], content: content[0] }) === false)
+                return;
 
-            if (!this._isTable)
+            head.find('.ui-expandable-icon')
+                .removeClass(options.icon.collapsed)
+                .addClass(options.icon.expanded)
+                .attr('title', options.icon.expandedTitle || $.ui.expandable.globalization.defaultIconExpandedTitle);
+
+            if (!this._isTable && !options.noWidgetClasses)
                 head.removeClass('ui-corner-all').addClass('ui-corner-top');
 
-            var content = this._getContentContainer(head);
-            if (this.options.showFx && noFx !== true)
+            if (showFx && noFx !== true)
             {
-                var _self = this,
-                    _duration = typeof this.options.showFx.duration === 'string' ? this.options.showFx.duration : this.options.showFx.duration || 400,
+                var $this = this,
+                    _duration = typeof showFx.duration === 'string' ? showFx.duration : showFx.duration || 400,
                     _complete = function()
                     {
-                        if ($.isFunction(_self.options.showFx.callback))
-                            _self.options.showFx.callback();
+                        if ($.isFunction(showFx.callback))
+                            showFx.callback();
 
-                        _self._trigger('expanded', null, { head: head[0], content: content[0] });
-                        _self._loadContent(head, reload);
+                        $this._trigger('expanded', null, { head: head[0], content: content[0] });
+                        $this._loadContent(head, reload);
                     };
 
-                if ($.effects && $.effects[this.options.showFx.effect])
-                    content.show(this.options.showFx.effect, this.options.showFx.options, _duration, _complete);
+                if ($.effects && $.effects[showFx.effect])
+                    content.show(showFx.effect, showFx.options, _duration, _complete);
 
-                else if (this.options.showFx.effect && content[this.options.showFx.effect])
-                    content[this.options.showFx.effect](_duration, _complete);
+                else if (showFx.effect && content[showFx.effect])
+                    content[options.showFx.effect](_duration, _complete);
 
                 else
                     content.show(_duration, _complete);
@@ -392,32 +438,35 @@
             if (!head || !head.length || head.hasClass('ui-state-disabled') || !this._isExpanded(head))
                 return;
 
-            head.find('.ui-expandable-icon')
-                .removeClass(this.options.icon.expanded)
-                .addClass(this.options.icon.collapsed)
-                .attr('title', this.options.icon.collapsedTitle || $.ui.expandable.globalization.defaultIconCollapsedTitle);
+            var options = this.options, hideFx = options.hideFx, content = options.contentContainer(head);
+            if (this._trigger('beforeCollapse', null, { head: head[0], content: content[0] }) === false)
+                return;
 
-            if (!this._isTable)
+            head.find('.ui-expandable-icon')
+                .removeClass(options.icon.expanded)
+                .addClass(options.icon.collapsed)
+                .attr('title', options.icon.collapsedTitle || $.ui.expandable.globalization.defaultIconCollapsedTitle);
+
+            if (!this._isTable && !options.noWidgetClasses)
                 head.removeClass('ui-corner-top').addClass('ui-corner-all');
 
-            var content = this._getContentContainer(head);
-            if (this.options.hideFx && noFx !== true)
+            if (hideFx && noFx !== true)
             {
-                var _self = this,
-                    _duration = typeof this.options.hideFx.duration === 'string' ? this.options.hideFx.duration : this.options.hideFx.duration || 400,
+                var $this = this,
+                    _duration = typeof hideFx.duration === 'string' ? hideFx.duration : hideFx.duration || 400,
                     _complete = function()
                     {
-                        if ($.isFunction(_self.options.hideFx.callback))
-                            _self.options.hideFx.callback();
+                        if ($.isFunction(hideFx.callback))
+                            hideFx.callback();
 
-                        _self._trigger('collapsed', null, { head: head[0], content: content[0] });
+                        $this._trigger('collapsed', null, { head: head[0], content: content[0] });
                     };
 
-                if ($.effects && $.effects[this.options.hideFx.effect])
-                    content.hide(this.options.hideFx.effect, this.options.hideFx.options, _duration, _complete);
+                if ($.effects && $.effects[hideFx.effect])
+                    content.hide(hideFx.effect, hideFx.options, _duration, _complete);
 
-                else if (content[this.options.hideFx.effect])
-                    content[this.options.hideFx.effect](_duration, _complete);
+                else if (content[hideFx.effect])
+                    content[hideFx.effect](_duration, _complete);
 
                 else
                     content.hide(_duration, _complete);
@@ -433,7 +482,7 @@
 
         loadContent: function(items, force)
         {
-            if (this.options.ajax && this.options.ajax.enabled === true && this.options.ajax.attr && this.options.ajax.attr.length)
+            if (this.options.ajax && this.options.ajax.enabled === true && this.options.ajax.attr)
                 this._parseItems(items, function(head) { this._loadContent(head, force); }, null);
 
             return this;
@@ -454,7 +503,7 @@
             {
                 items = items();
                 if (items === undefined || items === null)
-                    throw 'Function given to items parameter can not return an undefined or null value.';
+                    throw 'ExpandableException: Function given to items parameter can not return an undefined or null value.';
             }
 
             if (typeof items === 'string')
@@ -505,7 +554,7 @@
             if ($.isFunction(content))
                 content = content(head[0]);
 
-            var item = this._getContentElement(head).html(content);
+            var item = this.options.contentElement(head).html(content);
 
             if (isAjaxLoad && this.options.ajax.cache === true)
                 head.data('expandable.ajaxLoaded', !isFailedLoad);
@@ -518,22 +567,23 @@
             if (!head || !head.length)
                 return;
 
-            if (this.options.ajax && this.options.ajax.enabled === true && this.options.ajax.attr && this.options.ajax.attr.length && (force || this.options.ajax.cache !== true || head.data('expandable.ajaxLoaded') !== true))
+            var options = this.options, ajax = options.ajax;
+            if (ajax && ajax.enabled === true && ajax.attr && (force || ajax.cache !== true || head.data('expandable.ajaxLoaded') !== true))
             {
-                var url = head.attr(this.options.ajax.attr);
+                var url = head.attr(ajax.attr);
                 if (url && url.length)
                 {
-                    var success = this.options.ajax.options && $.isFunction(this.options.ajax.options.success) ? this.options.ajax.options.success : null;
-                    var error = this.options.ajax.options && $.isFunction(this.options.ajax.options.error) ? this.options.ajax.options.error : null;
-                    var opts = $.extend(true, { url: url, dataType: 'html' }, this.options.ajax.options);
-                    var self = this;
+                    var success = ajax.options && $.isFunction(ajax.options.success) ? ajax.options.success : null;
+                    var error = ajax.options && $.isFunction(ajax.options.error) ? ajax.options.error : null;
+                    var opts = $.extend(true, { url: url, dataType: 'html' }, ajax.options);
+                    var $this = this;
 
                     opts.success = function(data, textStatus, jqXHR)
                     {
                         if (success !== null)
                             data = success(data, textStatus, jqXHR, head[0]);
 
-                        self._setItemContent(head, data, true, false);
+                        $this._setItemContent(head, data, true, false);
                     };
 
                     opts.error = function(jqXHR, textStatus, errorThrown)
@@ -541,7 +591,7 @@
                         if (error !== null)
                             textStatus = error(jqXHR, textStatus, errorThrown, head[0]);
 
-                        self._setItemContent(head, textStatus, true, true);
+                        $this._setItemContent(head, textStatus, true, true);
                     }
 
                     $.ajax(opts);
@@ -605,7 +655,7 @@
             {
                 items = items();
                 if (items === undefined || items === null)
-                    throw 'Function given to items parameter can not return an undefined or null value.';
+                    throw 'ExpandableException: Function given to items parameter can not return an undefined or null value.';
             }
 
             if (typeof items === 'string')
@@ -653,12 +703,12 @@
                             break;
                     }
                     else
-                        throw 'Array items must be either a non-negative number or a non-empty string.';
+                        throw 'ExpandableException: Array items must be either a non-negative number or a non-empty string.';
                 }
                 return;
             }
 
-            throw 'items parameter must be either a function, non-empty string, non-negative number, jQuery object instance, or an array of (non-negative) numbers and/or HTML ID attribute string values.';
+            throw 'ExpandableException: items parameter must be either a function, non-empty string, non-negative number, jQuery object instance, or an array of (non-negative) numbers and/or HTML ID attribute string values.';
         }
     });
 
