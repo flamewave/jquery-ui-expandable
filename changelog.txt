@@ -45,3 +45,13 @@ Version 1.3 - October 26th 2011
  - Bug fix: when disabling specified items, all items would no longer be able to be expanded or collapsed.
  - Bug fix: when collapsing or expanding items, logic to expand/collapse the item would still be executed even if
    the item was already expanded/collapsed.
+
+Version 1.4 - March 12 2012
+ - Added several advanced options to allow fine-tuning the widget: noWidgetClasses, contentElement, contentContainer,
+   and iconContainer.
+ - Made several code optimizations and enhancements.
+ - An exception is no longer thrown when trying to set an option that can only be set on creation, instead a warning
+   is written to the JS console.
+ - All exceptions thrown now have "ExpandableException: " prefixed to their message.
+ - Project renamed to jqAmp UI Expandable so that it is not confused to be associated with the offical jQuery UI
+   project.

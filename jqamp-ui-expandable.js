@@ -1,5 +1,5 @@
 /*!
-* jQuery UI Expandable v1.4
+* jqAmp UI Expandable v1.4
 *
 * Copyright 2012, Tony Kramer
 * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -14,8 +14,8 @@
 * -------------
 * Dependencies:
 * -------------
-* - jquery (1.4.2 and up)
-* - jquery-ui (1.8.6 and up - core, widget)
+* - jQuery (1.4.2 and up)
+* - jQuery-ui (1.8.6 and up - core, widget)
 */
 (function($)
 {
@@ -29,7 +29,7 @@
     // .ui-expandable-table-content {}
     // .ui-expandable-disabled {}
 
-    $.widget('ui.expandable', {
+    $.widget('jqAmpUI.expandable', {
         version: '1.4',
         options: {
             disabled: false,
@@ -222,7 +222,7 @@
                 .prepend(
                     $('<span class="ui-icon ui-expandable-icon"><\/span>')
                         .addClass(isExpanded ? options.icon.expanded : options.icon.collapsed)
-                        .attr('title', isExpanded ? (options.icon.expandedTitle || $.ui.expandable.globalization.defaultIconExpandedTitle) : (options.icon.collapsedTitle || $.ui.expandable.globalization.defaultIconCollapsedTitle))
+                        .attr('title', isExpanded ? (options.icon.expandedTitle || $.jqAmpUI.expandable.globalization.defaultIconExpandedTitle) : (options.icon.collapsedTitle || $.jqAmpUI.expandable.globalization.defaultIconCollapsedTitle))
                 );
         },
 
@@ -398,7 +398,7 @@
             head.find('.ui-expandable-icon')
                 .removeClass(options.icon.collapsed)
                 .addClass(options.icon.expanded)
-                .attr('title', options.icon.expandedTitle || $.ui.expandable.globalization.defaultIconExpandedTitle);
+                .attr('title', options.icon.expandedTitle || $.jqAmpUI.expandable.globalization.defaultIconExpandedTitle);
 
             if (!this._isTable && !options.noWidgetClasses)
                 head.removeClass('ui-corner-all').addClass('ui-corner-top');
@@ -445,7 +445,7 @@
             head.find('.ui-expandable-icon')
                 .removeClass(options.icon.expanded)
                 .addClass(options.icon.collapsed)
-                .attr('title', options.icon.collapsedTitle || $.ui.expandable.globalization.defaultIconCollapsedTitle);
+                .attr('title', options.icon.collapsedTitle || $.jqAmpUI.expandable.globalization.defaultIconCollapsedTitle);
 
             if (!this._isTable && !options.noWidgetClasses)
                 head.removeClass('ui-corner-top').addClass('ui-corner-all');
@@ -712,7 +712,7 @@
         }
     });
 
-    $.ui.expandable.globalization = {
+    $.jqAmpUI.expandable.globalization = {
         defaultIconCollapsedTitle: 'Click to expand',
         defaultIconExpandedTitle: 'Click to collapse'
     };
