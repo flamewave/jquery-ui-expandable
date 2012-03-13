@@ -1,33 +1,38 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>jQuery UI Expandable Demo</title>
+        <title>jqAmp UI Expandable Demo</title>
         <meta http-equiv="Content-Type" content="text/html" />
         <link type="text/css" rel="stylesheet" media="screen" href="jquery-ui.css" />
-        <link type="text/css" rel="stylesheet" media="screen" href="../jquery-ui-expandable-min.css" />
+        <link type="text/css" rel="stylesheet" media="screen" href="../jqamp-ui-expandable-min.css" />
         <script type="text/javascript" src="jquery.min.js"></script>
         <script type="text/javascript" src="jquery-ui.min.js"></script>
-        <script type="text/javascript" src="../jquery-ui-expandable.js"></script>
+        <script type="text/javascript" src="../jqamp-ui-expandable.js"></script>
         <script type="text/javascript">//<![CDATA[
         $(function()
         {
+            $('body a').click(function() { return false; });
+        
             // Standard use demo.
-            $('#standard').expandable({ defaultState: false });
-            $('#std_expand_all').click(function() { $('#standard').expandable('expand'); return false; });
-            $('#std_collapse_all').click(function() { $('#standard').expandable('collapse'); return false; });
-            $('#std_disable_all').click(function() { $('#standard').expandable('disable'); return false; });
-            $('#std_enable_all').click(function() { $('#standard').expandable('enable'); return false; });
-            $('#std_disable_2').click(function() { $('#standard').expandable('disable', [1]); return false; });
-            $('#std_enable_2').click(function() { $('#standard').expandable('enable', [1]); return false; });
+            var std = $('#standard').expandable({ defaultState: false });
+            $('#std_widget').toggle(function() { std.expandable('destroy'); }, function() { std.expandable({ defaultState: false }); });
+            $('#std_expand_all').toggle(function() { std.expandable('expand'); }, function() { std.expandable('collapse'); });
+            $('#std_disable_all').toggle(function() { std.expandable('disable'); }, function() { std.expandable('enable'); });
+            $('#std_disable_2').toggle(function() { std.expandable('disable', [1]); }, function() { std.expandable('enable', [1]); });
             
             // Table use demo.
-            $('#table').expandable({ defaultState: [false,true,false], showFx: null, hideFx: null });
-            $('#tbl_expand_all').click(function() { $('#table').expandable('expand'); return false; });
-            $('#tbl_collapse_all').click(function() { $('#table').expandable('collapse'); return false; });
-            $('#tbl_disable_all').click(function() { $('#table').expandable('disable'); return false; });
-            $('#tbl_enable_all').click(function() { $('#table').expandable('enable'); return false; });
-            $('#tbl_disable_2').click(function() { $('#table').expandable('disable', [1]); return false; });
-            $('#tbl_enable_2').click(function() { $('#table').expandable('enable', [1]); return false; });
+            var tbl = $('#table').expandable({ defaultState: [false,true,false], showFx: null, hideFx: null });
+            $('#tbl_widget').toggle(function() { tbl.expandable('destroy'); }, function() { tbl.expandable({ defaultState: [false,true,false], showFx: null, hideFx: null }); });
+            $('#tbl_expand_all').toggle(function() { tbl.expandable('expand'); }, function() { tbl.expandable('collapse'); });
+            $('#tbl_disable_all').toggle(function() { tbl.expandable('disable'); }, function() { tbl.expandable('enable'); });
+            $('#tbl_disable_2').toggle(function() { tbl.expandable('disable', [1]); }, function() { tbl.expandable('enable', [1]); });
+
+            // Fieldset use demo.
+            var fs = $('#fieldset').expandable({ defaultState: false, noWidgetClasses: true, titleSelector: '> fieldset > legend' });
+            $('#fs_widget').toggle(function() { fs.expandable('destroy'); }, function() { fs.expandable({ defaultState: false, noWidgetClasses: true, titleSelector: '> fieldset > legend' }); });
+            $('#fs_expand_all').toggle(function() { fs.expandable('expand'); }, function() { fs.expandable('collapse'); });
+            $('#fs_disable_all').toggle(function() { fs.expandable('disable'); }, function() { fs.expandable('enable'); });
+            $('#fs_disable_2').toggle(function() { fs.expandable('disable', [1]); }, function() { fs.expandable('enable', [1]); });
         });
         //]]></script>
         <style type="text/css">
@@ -41,12 +46,10 @@
         <h2>Standard Use:</h2>
         Options used: { defaultState: false }<br />
         <br />
-        <a href="#" id="std_expand_all">Expand All</a>
-        | <a href="#" id="std_collapse_all">Collapse All</a>
-        | <a href="#" id="std_disable_all">Disable All</a>
-        | <a href="#" id="std_enable_all">Enable All</a>
-        | <a href="#" id="std_disable_2">Disable Section 2 Only</a>
-        | <a href="#" id="std_enable_2">Enable Section 2 Only</a><br />
+        <a href="#" id="std_widget">Toggle Widget</a>
+        | <a href="#" id="std_expand_all">Toggle Expand/Collapse All</a>
+        | <a href="#" id="std_disable_all">Toggle Disable/Enable All</a>
+        | <a href="#" id="std_disable_2">Toggle Disable/Enable Section 2 Only</a><br />
         <br />
         <div id="standard">
             <h3>Section 1</h3>
@@ -107,12 +110,10 @@
         <h2>Table Use:</h2>
         Options used: { defaultState: [false,true,false], showFx: null, hideFx: null }<br />
         <br />
-        <a href="#" id="tbl_expand_all">Expand All</a>
-        | <a href="#" id="tbl_collapse_all">Collapse All</a>
-        | <a href="#" id="tbl_disable_all">Disable All</a>
-        | <a href="#" id="tbl_enable_all">Enable All</a>
-        | <a href="#" id="tbl_disable_2">Disable Section 2 Only</a>
-        | <a href="#" id="tbl_enable_2">Enable Section 2 Only</a><br />
+        <a href="#" id="tbl_widget">Toggle Widget</a>
+        | <a href="#" id="tbl_expand_all">Toggle Expand/Collapse All</a>
+        | <a href="#" id="tbl_disable_all">Toggle Disable/Enable All</a>
+        | <a href="#" id="tbl_disable_2">Toggle Disable/Enable Section 2 Only</a><br />
         <br />
         <table id="table">
             <thead>
@@ -195,5 +196,60 @@
                 </tr>
             </tfoot>
         </table>
+
+        <h2>Fieldset Use:</h2>
+        Options used: { defaultState: false, noWidgetClasses: true, titleSelector: '> fieldset > legend' }<br />
+        <br />
+        <a href="#" id="fs_widget">Toggle Widget</a>
+        | <a href="#" id="fs_expand_all">Toggle Expand/Collapse All</a>
+        | <a href="#" id="fs_disable_all">Toggle Disable/Enable All</a>
+        | <a href="#" id="fs_disable_2">Toggle Disable/Enable Section 2 Only</a><br />
+        <div id="fieldset">
+            <fieldset>
+                <legend>Section 1</legend>
+                <div>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consequat interdum arcu, et lacinia
+                    augue cursus quis. Vivamus convallis nulla vel urna iaculis aliquam. Fusce in elit sem. Fusce id ipsum
+                    nec ipsum tristique lacinia ut a magna. Nulla ornare malesuada lectus, cursus rhoncus tellus laoreet
+                    at. Vestibulum sapien enim, feugiat nec egestas ut, posuere sed nisi. Duis feugiat volutpat velit, vel
+                    ullamcorper est adipiscing eget. Sed dictum iaculis nisi, at congue risus posuere id. Etiam vitae diam
+                    eu neque imperdiet luctus quis non elit. Vivamus pellentesque pharetra consectetur. Vivamus elementum,
+                    massa nec lobortis dignissim, velit nunc euismod urna, vitae elementum odio nunc a urna. In in est a
+                    eros adipiscing ullamcorper. Morbi posuere risus eget leo euismod pharetra aliquam arcu consequat.
+                    Morbi tortor massa, feugiat vitae scelerisque convallis, accumsan sed sem. Sed tempor fringilla mauris
+                    sed fringilla. Vestibulum et erat purus, viverra blandit mauris. Pellentesque habitant morbi tristique
+                    senectus et netus et malesuada fames ac turpis egestas. Pellentesque ultrices quam commodo nisl porta
+                    consectetur.
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Section 2</legend>
+                <div>
+                    Nam blandit accumsan posuere. Sed vel nulla eros. Ut viverra, sem id volutpat laoreet, felis tortor
+                    dictum ligula, quis faucibus sem magna quis elit. Nullam enim mi, malesuada ut dapibus a, venenatis et
+                    leo. Mauris aliquet purus ac diam vehicula rutrum. Sed et sem vel nibh vulputate iaculis sollicitudin
+                    nec dolor. Donec imperdiet elit eget nisl lobortis consequat. Mauris hendrerit aliquam ligula non
+                    volutpat. Etiam aliquet, leo vel tempus venenatis, lectus est porttitor tortor, non cursus metus massa
+                    sagittis ante. Duis ac tellus vitae enim tristique iaculis sodales eget massa. Sed dignissim orci
+                    interdum ipsum accumsan fringilla. Vestibulum quis erat eu nisl porttitor molestie. Phasellus sagittis,
+                    erat non accumsan adipiscing, ante ante gravida libero, eget porttitor augue arcu ut libero. Proin
+                    faucibus sollicitudin arcu eget pretium. Curabitur arcu est, sodales et consequat quis, feugiat nec
+                    ligula. Donec sollicitudin libero ut risus adipiscing ornare.
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Section 3</legend>
+                <div>
+                    Mauris nec libero eu nibh sodales faucibus. Pellentesque posuere porttitor orci, vel congue nunc
+                    posuere vitae. Vivamus fringilla varius semper. Cras ligula libero, luctus vestibulum ultrices sit
+                    amet, accumsan ac eros. Integer id orci eget sem rhoncus sodales ac at turpis. Quisque ligula magna,
+                    mollis nec rutrum in, congue ut purus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris
+                    at diam felis. Curabitur orci risus, egestas sed aliquet non, eleifend ac nulla. Praesent vel nibh non
+                    sapien scelerisque ullamcorper a a leo.
+                </div>
+            </fieldset>
+        </div>
     </body>
 </html>
