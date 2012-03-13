@@ -64,7 +64,7 @@
             noWidgetClasses: false,
             contentElement: null, // jQueryObject function(jQueryObject head) : returns the element that contains the item's HTML content.
             contentContainer: null, // jQueryObject function(jQueryObject head) : returns the element that is the item's container element of the content and is the element that is hidden and shown.
-            iconContainer: null, // jQueryObject function(jQueryObject head) : returns the element that is the item's container element of the arrow icon.
+            iconContainer: null // jQueryObject function(jQueryObject head) : returns the element that is the item's container element of the arrow icon.
         },
 
         _isTable: false,
