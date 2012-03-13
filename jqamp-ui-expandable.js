@@ -118,10 +118,12 @@
             {
                 var head = $(this), content = $this.options.contentContainer(head);
 
-                head.removeClass('ui-widget-header ui-expandable-header ui-corner-top ui-corner-all ui-expandable-table-header')
-                    .unbind('click.expandable');
+                head.removeClass('ui-helper-reset ui-widget-header ui-expandable-header ui-corner-top ui-corner-all ui-expandable-table-header')
+                    .unbind('click.expandable')
+                    .removeData('expandable.created')
+                    .removeData('expandable.index');
 
-                content.show().removeClass('ui-corner-bottom ui-widget-content ui-expandable-content ui-expandable-table-content');
+                content.show().removeClass('ui-helper-reset ui-corner-bottom ui-widget-content ui-expandable-content ui-expandable-table-content');
 
                 if (!$this._isTable)
                     content.next().remove(); // remove the spacer
