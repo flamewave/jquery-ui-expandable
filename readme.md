@@ -239,32 +239,11 @@ In most cases, the `event` parameter will be `null`. The `ui` parameter is an ob
     * `object` - Map of items and content to set. The value of the `content` parameter is ignored.  
         Supported formats:
         * Header element ID.  
-            Example:
-            ```javascript
-{
-    "firstItem": "content for the 1st item",
-    "second": function() { return "content for 2nd item"; },
-    ...
-}
-```
+            Example: `{ "firstItem": "content for the 1st item", "second": function() { return "content for 2nd item"; }, ... }`
         * Index of item (zero based).  
-            Example:
-            ```javascript
-{
-    1: "content for the 2nd item",
-    2: function() { return "content for 3rd item"; },
-    ...
-}
-```
+            Example: `{ 1: "content for the 2nd item", 2: function() { return "content for 3rd item"; }, ... }`
         * Mix of the two above.  
-            Example:
-            ```javascript
-{
-    "firstItem": "content for the 1st item,
-    1: function() { return "content for the 2nd item"; },
-    ...
-}
-```
+            Example: `{ "firstItem": "content for the 1st item, 1: function() { return "content for the 2nd item"; }, ... }`
 
 * **setItemStates([state, noFx, reload])**  
     Sets the items to the specified state. See the `defaultState` option for details on accepted values of the `state` parameter. If the `noFx` parameter is `true`, then no animations will be used when setting the item states. If the `reload` parameter is `true` and AJAX loading is enabled, then items being expanded will have their content reloaded via AJAX.
