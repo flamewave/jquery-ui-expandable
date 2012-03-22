@@ -1,5 +1,5 @@
 # jQuery Amplified UI Expandable
-*For jQuery/jQuery UI*
+*For jQuery/jQuery UI*  
 *Version 1.4*
 
 *Copyright 2012, Tony Kramer*  
@@ -156,8 +156,9 @@ Here is the full options object and the default values:
 ### Events
 All events follow the standard jQuery UI widget event signature: `void function(event, ui)`  
 In most cases, the `event` parameter will be `null`. The `ui` parameter is an object with the following properties:
-* head - The HTML DOM element that is the header of the item. `null` if the event is not associated with a specific expandable item.
-* content - The HTML DOM element that is the content of the item. `null` if the event is not associated with a specific expandable item.
+
+* `head` - The HTML DOM element that is the header of the item. `null` if the event is not associated with a specific expandable item.
+* `content` - The HTML DOM element that is the content of the item. `null` if the event is not associated with a specific expandable item.
 
 * **create:**  
     Raised when the widget is created. Inherited from the jQuery widget object.
@@ -228,6 +229,7 @@ In most cases, the `event` parameter will be `null`. The `ui` parameter is an ob
 
 * **setContent(items[, content])
     Sets the content of the specified item or items.  
+    The `content` parameter can be either a string containing the content, or a function that returns the content.  
     The `items` parameter can be one of the following values:
     * `function` - A function that returns one of the below values to specify the items to set the content of. Can not return `null` or `undefined` or an error will be thrown.
     * jQuery `object` - The items with the title HTML elements represented by the jQuery object will have their content set to the value of the `content` parameter.
@@ -236,34 +238,33 @@ In most cases, the `event` parameter will be `null`. The `ui` parameter is an ob
     * `string` - The item with a header element with the HTML ID attribute value of the string will have it's content set to the value of the `content` parameter.
     * `object` - Map of items and content to set. The value of the `content` parameter is ignored.  
         Supported formats:
-        * Header element ID.
+        * Header element ID.  
             Example:
             ```javascript
-            {
-                "firstItem": "content for the 1st item",
-                "second": function() { return "content for 2nd item"; },
-                ...
-            }
-            ```
-        * Index of item (zero based).
+{
+    "firstItem": "content for the 1st item",
+    "second": function() { return "content for 2nd item"; },
+    ...
+}
+```
+        * Index of item (zero based).  
             Example:
             ```javascript
-            {
-                1: "content for the 2nd item",
-                2: function() { return "content for 3rd item"; },
-                ...
-            }
-            ```
-        * Mix of the two above.
+{
+    1: "content for the 2nd item",
+    2: function() { return "content for 3rd item"; },
+    ...
+}
+```
+        * Mix of the two above.  
             Example:
             ```javascript
-            {
-                "firstItem": "content for the 1st item,
-                1: function() { return "content for the 2nd item"; },
-                ...
-            }
-            ```
-    The `content` parameter can be either a string containing the content, or a function that returns the content.
+{
+    "firstItem": "content for the 1st item,
+    1: function() { return "content for the 2nd item"; },
+    ...
+}
+```
 
 * **setItemStates([state, noFx, reload])**  
     Sets the items to the specified state. See the `defaultState` option for details on accepted values of the `state` parameter. If the `noFx` parameter is `true`, then no animations will be used when setting the item states. If the `reload` parameter is `true` and AJAX loading is enabled, then items being expanded will have their content reloaded via AJAX.
@@ -280,9 +281,9 @@ There is a globalization object defined that can be used to set default globaliz
 ```javascript
 $.jqAmpUI.expandable.globalization = {
     // The default icon title text (tool tip) when an item is in it's collapsed state.
-    defaultIconCollapsedTitle: 'Click to expand',
+    defaultIconCollapsedTitle: "Click to expand",
 
     // The default icon title text (tool tip) when an item is in it's expanded state.
-    defaultIconExpandedTitle: 'Click to collapse'
+    defaultIconExpandedTitle: "Click to collapse"
 }
 ```
