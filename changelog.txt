@@ -55,3 +55,18 @@ Version 1.4 - March 12 2012
  - All exceptions thrown now have "ExpandableException: " prefixed to their message.
  - Project renamed to jqAmp UI Expandable so that it is not confused to be associated with the offical jQuery UI
    project.
+
+Version 1.5 - June 27 2012
+ - Converted all string literals to be wrapped in " instead of ' where appropiate.
+ - Ajax attr option now defaults to "data-ajax-url" instead of "rel".
+ - Updated to use the new "prop" function where appropiate. Done in a way where code is still backwards compatible
+   with previous versions of jQuery that don't have the "prop" method. This fixes issue #1.
+ - Bug fix for issue #2 where toggling the disabled state of individual sections would cause the entire widget to
+   be set to a sudo disabled state.
+ - Added the isDisabled() method.
+ - Bug fix in the destroy() method where sections that were disabled would still have the disabled UI classes
+   applied to them.
+ - Added support for when the "items" parameter of the collapse(), disable(), enable(), expand(), isExpanded(),
+   loadContent(), setContent(), and toggle() methods is a function, null or undefined can be returned to indicate
+   that all sections should be affected.
+ - Made some improvements to the demo HTML file.

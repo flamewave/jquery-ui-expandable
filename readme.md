@@ -1,6 +1,6 @@
 # jQuery Amplified UI Expandable
 *For jQuery/jQuery UI*  
-*Version 1.4*
+*Version 1.5*
 
 *Copyright 2012, Tony Kramer*  
 *Dual licensed under the MIT or GPL Version 2 licenses.*  
@@ -91,7 +91,7 @@ $("#expandable").expandable([options]);
     * duration - Animation duration/speed.
     * callback - A function to call once the animation is complete.
 
-* **ajax:** `{ enabled: false, attr: "rel", cache: true, options: null }`  
+* **ajax:** `{ enabled: false, attr: "data-ajax-url", cache: true, options: null }`  
     AJAX options for loading the content of an item from an AJAX request when it is expanded. Setting this option to `null` will disable AJAX loading.
     * enabled - Indicates if AJAX loading is enabled.
     * attr - HTML attribute on the title element that contains the URL to load the content from.
@@ -142,7 +142,7 @@ Here is the full options object and the default values:
     },
     ajax: {
         enabled: false,
-        attr: "rel",
+        attr: "data-ajax-url",
         cache: true,
         options: null
     },
@@ -212,8 +212,11 @@ In most cases, the `event` parameter will be `null`. The `ui` parameter is an ob
 * **expand([items, noFx])**  
     Expands the specified items. See the `collapse` method for details on the parameters.
 
+* **isDisabled([items])**  
+    Returns true if all of the specified items are disabled, or if the items parameter is omitted, if all of the sections are disabled. See the `collapse` method for details on the `items` parameter.
+    
 * **isExpanded([items])**  
-    Returns true if all of the specified items are expanded. See the `collapse` method for details on the `items` parameter.
+    Returns true if all of the specified items are expanded, or if the items parameter is omitted, if all of the sections are expanded. See the `collapse` method for details on the `items` parameter.
 
 * **loadContent([items, force])**  
     Loads the content the specified items through AJAX requests. If AJAX loading is disabled, this method does nothing. See the `collapse` method for details on the `items` parameter. The optional `force` parameter will force the content to be reloaded, even if it has already been loaded. It essentially provides a way to refresh the content of one or more sections.
@@ -227,7 +230,7 @@ In most cases, the `event` parameter will be `null`. The `ui` parameter is an ob
 * **refresh()**  
     Refreshes and rebuilds the items of the expandable widget. Useful for if you want to add or remove items, so you don't have to destroy and re-create the widget.
 
-* **setContent(items[, content])
+* **setContent(items[, content])**  
     Sets the content of the specified item or items.  
     The `content` parameter can be either a string containing the content, or a function that returns the content.  
     The `items` parameter can be one of the following values:

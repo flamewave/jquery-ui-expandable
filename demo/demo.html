@@ -11,28 +11,28 @@
         <script type="text/javascript">//<![CDATA[
         $(function()
         {
-            $('body a').click(function() { return false; });
+            $("body a").click(function() { return false; });
         
             // Standard use demo.
-            var std = $('#standard').expandable({ defaultState: false });
-            $('#std_widget').toggle(function() { std.expandable('destroy'); }, function() { std.expandable({ defaultState: false }); });
-            $('#std_expand_all').toggle(function() { std.expandable('expand'); }, function() { std.expandable('collapse'); });
-            $('#std_disable_all').toggle(function() { std.expandable('disable'); }, function() { std.expandable('enable'); });
-            $('#std_disable_2').toggle(function() { std.expandable('disable', [1]); }, function() { std.expandable('enable', [1]); });
+            var std = $("#standard").expandable({ defaultState: false });
+            $("#std_widget").toggle(function() { std.expandable("destroy"); }, function() { std.expandable({ defaultState: false }); });
+            $("#std_expand_all").click(function() { if (!std.expandable("isExpanded")) std.expandable("expand"); else std.expandable("collapse"); });
+            $("#std_disable_all").click(function() { if (!std.expandable("isDisabled")) std.expandable("disable"); else std.expandable("enable"); });
+            $("#std_disable_2").click(function() { if (!std.expandable("isDisabled", [1])) std.expandable("disable", [1]); else std.expandable("enable", [1]); });
             
             // Table use demo.
-            var tbl = $('#table').expandable({ defaultState: [false,true,false], showFx: null, hideFx: null });
-            $('#tbl_widget').toggle(function() { tbl.expandable('destroy'); }, function() { tbl.expandable({ defaultState: [false,true,false], showFx: null, hideFx: null }); });
-            $('#tbl_expand_all').toggle(function() { tbl.expandable('expand'); }, function() { tbl.expandable('collapse'); });
-            $('#tbl_disable_all').toggle(function() { tbl.expandable('disable'); }, function() { tbl.expandable('enable'); });
-            $('#tbl_disable_2').toggle(function() { tbl.expandable('disable', [1]); }, function() { tbl.expandable('enable', [1]); });
+            var tbl = $("#table").expandable({ defaultState: [false, true, false], showFx: null, hideFx: null });
+            $("#tbl_widget").toggle(function() { tbl.expandable("destroy"); }, function() { tbl.expandable({ defaultState: [false, true, false], showFx: null, hideFx: null }); });
+            $("#tbl_expand_all").click(function() { if (!tbl.expandable("isExpanded")) tbl.expandable("expand"); else tbl.expandable("collapse"); });
+            $("#tbl_disable_all").click(function() { if (!tbl.expandable("isDisabled")) tbl.expandable("disable"); else tbl.expandable("enable"); });
+            $("#tbl_disable_2").click(function() { if (!tbl.expandable("isDisabled", [1])) tbl.expandable("disable", [1]); else tbl.expandable("enable", [1]); });
 
             // Fieldset use demo.
-            var fs = $('#fieldset').expandable({ defaultState: false, noWidgetClasses: true, titleSelector: '> fieldset > legend' });
-            $('#fs_widget').toggle(function() { fs.expandable('destroy'); }, function() { fs.expandable({ defaultState: false, noWidgetClasses: true, titleSelector: '> fieldset > legend' }); });
-            $('#fs_expand_all').toggle(function() { fs.expandable('expand'); }, function() { fs.expandable('collapse'); });
-            $('#fs_disable_all').toggle(function() { fs.expandable('disable'); }, function() { fs.expandable('enable'); });
-            $('#fs_disable_2').toggle(function() { fs.expandable('disable', [1]); }, function() { fs.expandable('enable', [1]); });
+            var fs = $("#fieldset").expandable({ defaultState: false, noWidgetClasses: true, titleSelector: "> fieldset > legend" });
+            $("#fs_widget").toggle(function() { fs.expandable("destroy"); }, function() { fs.expandable({ defaultState: false, noWidgetClasses: true, titleSelector: "> fieldset > legend" }); });
+            $("#fs_expand_all").click(function() { if (!fs.expandable("isExpanded")) fs.expandable("expand"); else fs.expandable("collapse"); });
+            $("#fs_disable_all").click(function() { if (!fs.expandable("isDisabled")) fs.expandable("disable"); else fs.expandable("enable"); });
+            $("#fs_disable_2").click(function() { if (!fs.expandable("isDisabled", [1])) fs.expandable("disable", [1]); else fs.expandable("enable", [1]); });
         });
         //]]></script>
         <style type="text/css">
@@ -44,7 +44,7 @@
     <body>
 
         <h2>Standard Use:</h2>
-        Options used: { defaultState: false }<br />
+        Options used: <code>{ defaultState: false }</code><br />
         <br />
         <a href="#" id="std_widget">Toggle Widget</a>
         | <a href="#" id="std_expand_all">Toggle Expand/Collapse All</a>
@@ -108,7 +108,7 @@
         </div>
 
         <h2>Table Use:</h2>
-        Options used: { defaultState: [false,true,false], showFx: null, hideFx: null }<br />
+        Options used: <code>{ defaultState: [false, true, false], showFx: null, hideFx: null }</code><br />
         <br />
         <a href="#" id="tbl_widget">Toggle Widget</a>
         | <a href="#" id="tbl_expand_all">Toggle Expand/Collapse All</a>
@@ -198,7 +198,7 @@
         </table>
 
         <h2>Fieldset Use:</h2>
-        Options used: { defaultState: false, noWidgetClasses: true, titleSelector: '> fieldset > legend' }<br />
+        Options used: <code>{ defaultState: false, noWidgetClasses: true, titleSelector: "> fieldset > legend" }</code><br />
         <br />
         <a href="#" id="fs_widget">Toggle Widget</a>
         | <a href="#" id="fs_expand_all">Toggle Expand/Collapse All</a>
