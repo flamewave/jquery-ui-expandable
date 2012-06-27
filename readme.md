@@ -188,7 +188,7 @@ In most cases, the `event` parameter will be `null`. The `ui` parameter is an ob
 * **collapse([items, noFx, reload])**  
     Collapses the specified items. The `items` parameter can be one of the following values:
     * `null` or `undefined` - Collapses all of the items.
-    * `function` - A function that returns one of the below values to specify the items to collapse. Can not return `null` or `undefined` or an error will be thrown.
+    * `function` - A function that returns one of the below values to specify the items to collapse.
     * jQuery `object` - Collapses the items with the specified title HTML elements represented by the jQuery object.
     * `"first"` or `"last"` - Collapses the first or last item.
     * `number` - Collapses the item with the specified (zero based) index.

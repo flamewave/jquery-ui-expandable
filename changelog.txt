@@ -67,6 +67,6 @@ Version 1.5 - June 27 2012
  - Bug fix in the destroy() method where sections that were disabled would still have the disabled UI classes
    applied to them.
  - Added support for when the "items" parameter of the collapse(), disable(), enable(), expand(), isExpanded(),
-   loadContent(), setContent(), and toggle() methods is a function, null or undefined can be returned to indicate
-   that all sections should be affected.
+   loadContent(), and toggle() methods is a function, null or undefined can be returned to indicate that all
+   sections should be affected.
  - Made some improvements to the demo HTML file.
