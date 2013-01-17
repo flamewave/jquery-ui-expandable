@@ -1,6 +1,6 @@
 {
     "name": "jqamp-ui-expandable",
-    "version": "1.4",
+    "version": "1.5",
     "title": "jqAmp UI Expandable",
     "description": "This widget is similar to the jQuery UI Accordion widget, except that it allows more than one section to be open at a time.",
     "author": {
@@ -26,7 +26,7 @@
     "homepage": "https://github.com/flamewave/jquery-ui-expandable",
     "docs": "https://github.com/flamewave/jquery-ui-expandable/blob/master/readme.md",
     "bugs": "https://github.com/flamewave/jquery-ui-expandable/issues",
-    "download": "https://github.com/flamewave/jquery-ui-expandable/archive/v1.4.zip",
+    "download": "https://github.com/flamewave/jquery-ui-expandable/archive/v1.5.zip",
     "dependencies": {
         "jQuery": ">=1.4.2",
         "jQuery-ui": ">=1.8.6 (core, widget)"
