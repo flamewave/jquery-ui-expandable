@@ -18,9 +18,9 @@
         }
     ],
     "keywords": [
-        "expandable section",
-        "multi-open accordian",
-        "expandable table"
+        "expandable",
+        "section",
+        "ui"
     ],
     "homepage": "https://github.com/flamewave/jquery-ui-expandable",
     "docs": "https://github.com/flamewave/jquery-ui-expandable/blob/master/readme.md",
