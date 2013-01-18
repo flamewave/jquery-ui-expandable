@@ -1,5 +1,5 @@
 {
-    "name": "expandable",
+    "name": "jqampui-expandable",
     "version": "1.5",
     "title": "jqAmp UI Expandable",
     "description": "This widget is similar to the jQuery UI Accordion widget, except that it allows more than one section to be open at a time.",
