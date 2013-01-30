@@ -1,20 +1,20 @@
 {
-    "name": "jqampui-expandable",
+    "name": "jqampui.expandable",
     "version": "1.5",
     "title": "jqAmp UI Expandable",
     "description": "This widget is similar to the jQuery UI Accordion widget, except that it allows more than one section to be open at a time.",
     "author": {
         "name": "Tony Kramer",
-        "email": "flamewave4@gmail.com"
+        "url": "https://github.com/flamewave"
     },
     "licenses": [
         {
             "type": "GPLv2",
-            "url": "https://raw.github.com/flamewave/jquery-ui-expandable/master/GPL-LICENSE.txt"
+            "url": "http://opensource.org/licenses/GPL-2.0"
         },
         {
             "type": "MIT",
-            "url": "https://raw.github.com/flamewave/jquery-ui-expandable/master/MIT-LICENSE.txt"
+            "url": "http://opensource.org/licenses/MIT"
         }
     ],
     "keywords": [
